@@ -493,25 +493,6 @@ function getParams() {
         for (let r = 0; r < prefix.length; r++) - 1 !== e.href.indexOf(prefix[r]) && (-1 === e.href.indexOf("?") ? e.href += "?" + t.toString() + getParams() : e.href += "&" + t.toString() + getParams())
     })
 }();
-</script>
-
-        <script type="text/javascript">
-      var back_redirect_back_link = "/br" + location.search;
-      history.pushState({}, "", location.href);
-      history.pushState({}, "", location.href);
-
-      window.addEventListener(
-        "popstate",
-        function (event) {
-          if (event.state) {
-            setTimeout(function () {
-              location.href = back_redirect_back_link;
-            }, 1);
-          }
-        },
-        false
-      );
-    </script>
           
   </footer>
 
